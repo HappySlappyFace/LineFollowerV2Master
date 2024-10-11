@@ -14,10 +14,14 @@ public:
     CommandSender(HardwareSerial &serialPort);
 
     // Method prototypes
-    void sendSetSpeed(int speed);
-    void sendSetTarget(int target);
-    void sendStop();
-    void sendSetPID(float p, float i, float d);
+    void sendSetSpeed(int speed) const;
+    void sendSetTarget(int target) const;
+    void sendStop() const;
+    void sendSetPID(float p, float i, float d) const;
+
+    void sendSetRPM1(int rpm) const;
+
+    void sendSetRPM2(int rpm) const;
 };
 
 #endif // COMMAND_SENDER_H

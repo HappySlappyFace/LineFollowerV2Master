@@ -13,7 +13,7 @@ CommandSender commandSender(masterSerial);  // Create an instance of CommandSend
 unsigned long lastCommandTime = 0;
 const unsigned long commandInterval = 1500;  //     500 ms delay between commands
 
-int commandIndex = 0;
+int commandIndex = 2;
 int test=1;
 
 void setup() {
@@ -32,8 +32,11 @@ void loop() {
             // Execute different commands based on commandIndex
             switch (commandIndex) {
                 case 0:
-                    commandSender.sendSetPID(3, 3.0, 0.05);  // Set PID values (P=1.0, I=0.5, D=0.1)
-                    commandSender.sendSetSpeed(600);  // Set speed to 100
+                    commandSender.sendSetPID(0.7, 2.5, 0.1);  // Set PID values (P=1.0, I=0.5, D=0.1)
+                    // commandSender.sendSetPID(3, 3.0, 0.05);  // Set PID values (P=1.0, I=0.5, D=0.1)
+                    // commandSender.sendSetSpeed(600);  // Set speed to 100
+                    commandSender.sendSetRPM1(100);
+                    commandSender.sendSetRPM2(-100);
                 break;
                 case 1:
                     commandSender.sendSetPID(1.4, 1.4, 0);
@@ -41,17 +44,39 @@ void loop() {
                     test=0;
                 break;
                 case 2:
-                    commandSender.sendSetTarget(50);  // Set target (steering) to 50
+                    commandSender.sendSetPID(2.4, 3, 0.01);  // Set PID values (P=1.0, I=0.5, D=0.1)
+                    commandSender.sendSetRPM1(250);
+                    commandSender.sendSetRPM2(220);
+                // commandSender.sendSetTarget(50);  // Set target (steering) to 50
 
                 break;
                 case 3:
-                    commandSender.sendSetPID(1.0, 0.5, 0.1);  // Set PID values (P=1.0, I=0.5, D=0.1)
+                    commandSender.sendSetPID(2.4, 3, 0.01);  // Set PID values (P=1.0, I=0.5, D=0.1)
+                    commandSender.sendSetRPM1(100);
+                    commandSender.sendSetRPM2(150);
+                    // commandSender.sendSetPID(1.0, 0.5, 0.1);  // Set PID values (P=1.0, I=0.5, D=0.1)
                 break;
+                case 4:
+                    commandSender.sendSetPID(1.4, 1.4, 0);
+                    commandSender.sendStop();         // Stop the motors
+                    break;
+                case 5:
+                    commandSender.sendSetPID(0.7, 2.5, 0.1);  // Set PID values (P=1.0, I=0.5, D=0.1)
+                    // commandSender.sendSetPID(3, 3.0, 0.05);  // Set PID values (P=1.0, I=0.5, D=0.1)
+                    // commandSender.sendSetSpeed(600);  // Set speed to 100
+                    commandSender.sendSetRPM1(100);
+                    commandSender.sendSetRPM2(-100);
+                break;
+                default:
+                    commandSender.sendSetPID(1.4, 1.4, 0);
+                    commandSender.sendStop();         // Stop the motors
+                    test=0;
+
 
             }
 
             // Increment command index, loop back if it exceeds the number of commands
-            commandIndex = (commandIndex + 1) % 4;  // We have 4 commands, so we loop after the last command
+            commandIndex = (commandIndex + 1);  // We have 4 commands, so we loop after the last command
         }
     }
 }
