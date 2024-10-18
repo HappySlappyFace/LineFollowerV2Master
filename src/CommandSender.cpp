@@ -3,32 +3,40 @@
 #include "CommandSender.h"
 #include <HardwareSerial.h>
 
-
+int debugCommunication=0;
 // Constructor that takes a reference to a HardwareSerial object
 CommandSender::CommandSender(HardwareSerial &serialPort) : serial(serialPort) {
     // Nothing needed here for now
 }
 
 // Method to send the speed command
+
 void CommandSender::sendSetSpeed(int speed) const {
     String command = "SETSPD:" + String(speed) + "\n";
     serial.print(command);
-    Serial.print("Sent command: ");
-    Serial.println(command);
+    if(debugCommunication) { Serial.print("Sent command: ");
+        Serial.println(command);
+    }
+}
+
+void CommandSender::sendSetTarget(int target) const {
+    String command = "T:" + String(target) + "\n";
+    serial.print(command);
+
+    if (debugCommunication) {
+        Serial.print("Sent command: ");
+        Serial.println(command);
+    }
+
 }
 
 // Method to send the target command
-void CommandSender::sendSetTarget(int target) const {
-    String command = "SETTGT:" + String(target) + "\n";
-    serial.print(command);
-    Serial.print("Sent command: ");
-    Serial.println(command);
-}
 
 // Method to send the stop command
 void CommandSender::sendStop() const {
     String command = "STOP\n";
     serial.print(command);
+
     Serial.print("Sent command: ");
     Serial.println(command);
 }

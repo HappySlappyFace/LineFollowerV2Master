@@ -3,17 +3,19 @@
 //
 
 #include "CommandSender.h"  // Include the CommandSender class
-
+#include "IRSensors.h"
 #include <HardwareSerial.h>
 
 HardwareSerial masterSerial(2);  // Use Serial2 for communication with the slave ESP32
 
 CommandSender commandSender(masterSerial);  // Create an instance of CommandSender
 
-unsigned long lastCommandTime = 0;
-const unsigned long commandInterval = 1500;  //     500 ms delay between commands
+IRSensors irSensors;
 
-int commandIndex = 2;
+unsigned long lastCommandTime = 0;
+const unsigned long commandInterval = 5000;  //     500 ms delay between commands
+
+int commandIndex = 0;
 int test=1;
 
 void setup() {
@@ -21,11 +23,28 @@ void setup() {
     masterSerial.begin(115200, SERIAL_8N1, 16, 17);  // TX=17, RX=16 for UART communication
 
     Serial.begin(115200);  // For debugging
+
+    irSensors.initialize();
+
+    // Calibrate sensors on startup
+    Serial.println("Calibrating sensors...");
+    irSensors.calibrate();
+    Serial.println("Calibration complete.");
 }
+unsigned long lastPIDSent = 0;
+
 
 void loop() {
     // Check if 500ms has passed to send the next command
+    irSensors.readSensorArray();
+    // irSensors.printSensorValues();
+    int error = irSensors.calculateError();
+    // Serial.println(error);
     if(test){
+        if (millis() - lastPIDSent>=100) {
+            lastPIDSent = millis();
+            commandSender.sendSetTarget(error);
+        }
         if (millis() - lastCommandTime >= commandInterval) {
             lastCommandTime = millis();  // Reset the timer
 
@@ -34,9 +53,9 @@ void loop() {
                 case 0:
                     commandSender.sendSetPID(0.7, 2.5, 0.1);  // Set PID values (P=1.0, I=0.5, D=0.1)
                     // commandSender.sendSetPID(3, 3.0, 0.05);  // Set PID values (P=1.0, I=0.5, D=0.1)
-                    // commandSender.sendSetSpeed(600);  // Set speed to 100
-                    commandSender.sendSetRPM1(100);
-                    commandSender.sendSetRPM2(-100);
+                    commandSender.sendSetSpeed(200);  // Set speed to 100
+                    // commandSender.sendSetRPM1(100);
+                    // commandSender.sendSetRPM2(-100);
                 break;
                 case 1:
                     commandSender.sendSetPID(1.4, 1.4, 0);
